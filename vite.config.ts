@@ -18,8 +18,8 @@ export default defineConfig({
           'animation-vendor': ['framer-motion', 'gsap']
         },
         format: 'es',
-        entryFileNames: 'assets/[name]-[hash].mjs',
-        chunkFileNames: 'assets/[name]-[hash].mjs',
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash][extname]'
       }
     }
