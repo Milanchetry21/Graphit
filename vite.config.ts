@@ -4,8 +4,10 @@ import react from '@vitejs/plugin-react';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: '/',
   build: {
     target: 'esnext',
+    sourcemap: true,
     rollupOptions: {
       external: [],
       output: {
@@ -13,11 +15,20 @@ export default defineConfig({
           'react-vendor': ['react', 'react-dom'],
           'chart-vendor': ['chart.js', 'react-chartjs-2'],
           'animation-vendor': ['framer-motion', 'gsap']
-        }
+        },
+        format: 'es',
+        entryFileNames: '[name]-[hash].js',
+        chunkFileNames: '[name]-[hash].js',
+        assetFileNames: '[name]-[hash][extname]'
       }
     }
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'chart.js', 'react-chartjs-2', 'framer-motion', 'gsap']
+  },
+  server: {
+    headers: {
+      'Content-Type': 'application/javascript'
+    }
   }
 });

@@ -8,7 +8,18 @@
         "buildCommand": "npm install --platform=linux --arch=x64 && npm run build",
         "installCommand": "npm install --platform=linux --arch=x64",
         "framework": "vite",
-        "outputDirectory": "dist"
+        "outputDirectory": "dist",
+        "headers": [
+          {
+            "source": "/(.*)\\.js",
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/javascript"
+              }
+            ]
+          }
+        ]
       }
     }
   ],
