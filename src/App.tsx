@@ -1,26 +1,30 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import { BarChart, LineChart, PieChart, Settings2, Download, Share2, ArrowLeft } from 'lucide-react';
-import DataInput from './components/DataInput';
-import ChartDisplay from './components/ChartDisplay';
-import ChartCustomization from './components/ChartCustomization';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import LandingPage from './components/LandingPage';
-import VisualizationPage from './components/VisualizationPage';
+import ChartCreator from './components/ChartCreator';
 import Navbar from './components/Navbar';
-import { motion } from 'framer-motion';
+import FloatingDots from './components/FloatingDots';
 
-type ChartType = 'bar' | 'line' | 'pie';
+const AppContent: React.FC = () => {
+  const location = useLocation();
+  const isLandingPage = location.pathname === '/';
+
+  return (
+    <div className="min-h-screen bg-white overflow-x-hidden">
+      <Navbar />
+      {isLandingPage && <FloatingDots />}
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/create" element={<ChartCreator />} />
+      </Routes>
+    </div>
+  );
+};
 
 const App: React.FC = () => {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/create" element={<VisualizationPage />} />
-        </Routes>
-      </div>
+      <AppContent />
     </Router>
   );
 };
