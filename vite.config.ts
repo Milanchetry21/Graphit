@@ -8,6 +8,7 @@ export default defineConfig({
   build: {
     target: 'esnext',
     sourcemap: true,
+    modulePreload: true,
     rollupOptions: {
       external: [],
       output: {
@@ -17,8 +18,8 @@ export default defineConfig({
           'animation-vendor': ['framer-motion', 'gsap']
         },
         format: 'es',
-        entryFileNames: 'assets/[name]-[hash].js',
-        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].mjs',
+        chunkFileNames: 'assets/[name]-[hash].mjs',
         assetFileNames: 'assets/[name]-[hash][extname]'
       }
     }
