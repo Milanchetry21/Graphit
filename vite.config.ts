@@ -4,22 +4,20 @@ import react from '@vitejs/plugin-react';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  optimizeDeps: {
-    exclude: ['lucide-react'],
-  },
-  base: './',
   build: {
-    sourcemap: true,
-    outDir: 'dist',
-    assetsDir: 'assets',
+    target: 'esnext',
     rollupOptions: {
+      external: [],
       output: {
         manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'react-vendor': ['react', 'react-dom'],
           'chart-vendor': ['chart.js', 'react-chartjs-2'],
-          'animation-vendor': ['framer-motion', 'gsap'],
-        },
-      },
-    },
+          'animation-vendor': ['framer-motion', 'gsap']
+        }
+      }
+    }
   },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'chart.js', 'react-chartjs-2', 'framer-motion', 'gsap']
+  }
 });
