@@ -144,146 +144,139 @@ const ChartCustomization: React.FC<ChartCustomizationProps> = ({
   const legendPositions: LegendPosition[] = ['top', 'bottom', 'left', 'right'];
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-12 gap-6">
-        {/* Left Section: Chart Type & Display Options */}
-        <div className="col-span-12 lg:col-span-3 space-y-6">
-          {/* Chart Type */}
-          <div>
-            <h3 className="text-sm font-medium text-[#0F4C81] mb-3">Chart Type</h3>
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => onChartTypeChange('bar')}
-                className={`p-2 rounded-lg flex items-center gap-2 transition-colors ${
-                  chartType === 'bar'
-                    ? 'bg-[#0F4C81] text-white'
-                    : 'bg-[#F5F9FD] text-[#0F4C81] hover:bg-[#E5EEF6]'
-                }`}
-              >
-                <BarChart3 className="w-5 h-5" />
-                <span className="text-sm">Bar</span>
-              </button>
-              <button
-                onClick={() => onChartTypeChange('line')}
-                className={`p-2 rounded-lg flex items-center gap-2 transition-colors ${
-                  chartType === 'line'
-                    ? 'bg-[#0F4C81] text-white'
-                    : 'bg-[#F5F9FD] text-[#0F4C81] hover:bg-[#E5EEF6]'
-                }`}
-              >
-                <LineChart className="w-5 h-5" />
-                <span className="text-sm">Line</span>
-              </button>
-              <button
-                onClick={() => onChartTypeChange('pie')}
-                className={`p-2 rounded-lg flex items-center gap-2 transition-colors ${
-                  chartType === 'pie'
-                    ? 'bg-[#0F4C81] text-white'
-                    : 'bg-[#F5F9FD] text-[#0F4C81] hover:bg-[#E5EEF6]'
-                }`}
-              >
-                <PieChart className="w-5 h-5" />
-                <span className="text-sm">Pie</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Display Options */}
-          <div>
-            <h3 className="text-sm font-medium text-[#0F4C81] mb-3">Display Options</h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-[#2D9596]">Grid Lines</span>
-                <motion.button
-                  onClick={() => onShowGridLinesChange(!showGridLines)}
-                  className={`w-10 h-5 rounded-full p-0.5 transition-colors ${
-                    showGridLines ? 'bg-[#0F4C81]' : 'bg-[#E5EEF6]'
-                  }`}
-                >
-                  <motion.div
-                    className="w-4 h-4 bg-white rounded-full"
-                    animate={{ x: showGridLines ? 20 : 0 }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                  />
-                </motion.button>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-[#2D9596]">Data Labels</span>
-                <motion.button
-                  onClick={() => onShowDataLabelsChange(!showDataLabels)}
-                  className={`w-10 h-5 rounded-full p-0.5 transition-colors ${
-                    showDataLabels ? 'bg-[#0F4C81]' : 'bg-[#E5EEF6]'
-                  }`}
-                >
-                  <motion.div
-                    className="w-4 h-4 bg-white rounded-full"
-                    animate={{ x: showDataLabels ? 20 : 0 }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                  />
-                </motion.button>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-[#2D9596]">Show Legend</span>
-                <motion.button
-                  onClick={() => onShowLegendChange(!showLegend)}
-                  className={`w-10 h-5 rounded-full p-0.5 transition-colors ${
-                    showLegend ? 'bg-[#0F4C81]' : 'bg-[#E5EEF6]'
-                  }`}
-                >
-                  <motion.div
-                    className="w-4 h-4 bg-white rounded-full"
-                    animate={{ x: showLegend ? 20 : 0 }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                  />
-                </motion.button>
-              </div>
-              {showLegend && (
-                <select
-                  value={legendPosition}
-                  onChange={(e) => onLegendPositionChange(e.target.value as LegendPosition)}
-                  className="w-full px-3 py-2 rounded-lg border border-[#E5EEF6] focus:outline-none focus:ring-2 focus:ring-[#0F4C81]/20 text-sm"
-                >
-                  {legendPositions.map((position) => (
-                    <option key={position} value={position}>
-                      {position.charAt(0).toUpperCase() + position.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
-          </div>
+    <div className="space-y-8">
+      {/* Chart Type Selection */}
+      <div>
+        <h3 className="text-sm font-semibold text-white mb-4">Chart Type</h3>
+        <div className="grid grid-cols-3 gap-3">
+          <button
+            onClick={() => onChartTypeChange('bar')}
+            className={`p-3 rounded-xl flex flex-col items-center gap-2 transition-all duration-200 ${
+              chartType === 'bar'
+                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg scale-105'
+                : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:scale-[1.02]'
+            }`}
+          >
+            <BarChart3 className="w-6 h-6" />
+            <span className="text-xs font-medium">Bar</span>
+          </button>
+          <button
+            onClick={() => onChartTypeChange('line')}
+            className={`p-3 rounded-xl flex flex-col items-center gap-2 transition-all duration-200 ${
+              chartType === 'line'
+                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg scale-105'
+                : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:scale-[1.02]'
+            }`}
+          >
+            <LineChart className="w-6 h-6" />
+            <span className="text-xs font-medium">Line</span>
+          </button>
+          <button
+            onClick={() => onChartTypeChange('pie')}
+            className={`p-3 rounded-xl flex flex-col items-center gap-2 transition-all duration-200 ${
+              chartType === 'pie'
+                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg scale-105'
+                : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:scale-[1.02]'
+            }`}
+          >
+            <PieChart className="w-6 h-6" />
+            <span className="text-xs font-medium">Pie</span>
+          </button>
         </div>
+      </div>
 
-        {/* Center Section: Theme Selection */}
-        <div className="col-span-12 lg:col-span-6">
-          <h3 className="text-sm font-medium text-[#0F4C81] mb-3">Theme</h3>
-          <div className="grid grid-cols-3 gap-2">
-            {themes.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => onThemeChange(t.id)}
-                className={`relative overflow-hidden p-3 rounded-lg transition-all duration-300 ${
-                  theme === t.id
-                    ? 'ring-2 ring-[#0F4C81] scale-[1.02] shadow-lg'
-                    : 'hover:ring-1 hover:ring-[#0F4C81]/30 hover:scale-[1.01] shadow-md'
-                } ${t.effect} ${t.gradient}`}
-              >
-                <span className={`text-sm font-medium ${
-                  ['glass', 'frost'].includes(t.id) 
-                    ? 'text-slate-700 font-semibold' 
-                    : 'text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]'
-                }`}>
-                  {t.name}
-                </span>
-              </button>
-            ))}
+      {/* Display Options */}
+      <div>
+        <h3 className="text-sm font-semibold text-white mb-4">Display Options</h3>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between bg-white/5 p-3 rounded-xl">
+            <span className="text-sm text-slate-300">Grid Lines</span>
+            <motion.button
+              onClick={() => onShowGridLinesChange(!showGridLines)}
+              className={`w-11 h-6 rounded-full p-0.5 transition-colors ${
+                showGridLines ? 'bg-gradient-to-r from-blue-500 to-purple-500' : 'bg-white/10'
+              }`}
+            >
+              <motion.div
+                className="w-5 h-5 bg-white rounded-full shadow-sm"
+                animate={{ x: showGridLines ? 20 : 0 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              />
+            </motion.button>
           </div>
+          <div className="flex items-center justify-between bg-white/5 p-3 rounded-xl">
+            <span className="text-sm text-slate-300">Data Labels</span>
+            <motion.button
+              onClick={() => onShowDataLabelsChange(!showDataLabels)}
+              className={`w-11 h-6 rounded-full p-0.5 transition-colors ${
+                showDataLabels ? 'bg-gradient-to-r from-blue-500 to-purple-500' : 'bg-white/10'
+              }`}
+            >
+              <motion.div
+                className="w-5 h-5 bg-white rounded-full shadow-sm"
+                animate={{ x: showDataLabels ? 20 : 0 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              />
+            </motion.button>
+          </div>
+          <div className="flex items-center justify-between bg-white/5 p-3 rounded-xl">
+            <span className="text-sm text-slate-300">Show Legend</span>
+            <motion.button
+              onClick={() => onShowLegendChange(!showLegend)}
+              className={`w-11 h-6 rounded-full p-0.5 transition-colors ${
+                showLegend ? 'bg-gradient-to-r from-blue-500 to-purple-500' : 'bg-white/10'
+              }`}
+            >
+              <motion.div
+                className="w-5 h-5 bg-white rounded-full shadow-sm"
+                animate={{ x: showLegend ? 20 : 0 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              />
+            </motion.button>
+          </div>
+          {showLegend && (
+            <select
+              value={legendPosition}
+              onChange={(e) => onLegendPositionChange(e.target.value as LegendPosition)}
+              className="w-full px-4 py-2 rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm bg-white/5 text-slate-300"
+            >
+              {legendPositions.map((position) => (
+                <option key={position} value={position}>
+                  {position.charAt(0).toUpperCase() + position.slice(1)}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
+      </div>
 
-        {/* Right Section: Text Options */}
-        <div className="col-span-12 lg:col-span-3 space-y-4">
+      {/* Theme Selection */}
+      <div>
+        <h3 className="text-sm font-semibold text-white mb-4">Theme</h3>
+        <div className="grid grid-cols-2 gap-3">
+          {themes.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => onThemeChange(t.id)}
+              className={`p-3 rounded-xl flex items-center gap-2 transition-all duration-200 ${
+                theme === t.id
+                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg scale-105'
+                  : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:scale-[1.02]'
+              }`}
+            >
+              <div className={`w-4 h-4 rounded-full ${t.gradient} ${t.effect}`} />
+              <span className="text-xs font-medium">{t.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Text Options */}
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-white">Text Options</h3>
+        <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium text-[#0F4C81] mb-2 block">
+            <label className="text-sm text-slate-300 mb-2 block">
               Chart Title
             </label>
             <input
@@ -291,12 +284,12 @@ const ChartCustomization: React.FC<ChartCustomizationProps> = ({
               value={title}
               onChange={(e) => onTitleChange(e.target.value)}
               placeholder="Enter chart title"
-              className="w-full px-3 py-2 rounded-lg border border-[#E5EEF6] focus:outline-none focus:ring-2 focus:ring-[#0F4C81]/20 text-sm"
+              className="w-full px-4 py-2 rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm bg-white/5 text-white placeholder-slate-400"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium text-[#0F4C81] mb-2 block">
+            <label className="text-sm text-slate-300 mb-2 block">
               X-Axis Label
             </label>
             <input
@@ -304,12 +297,12 @@ const ChartCustomization: React.FC<ChartCustomizationProps> = ({
               value={xAxisLabel}
               onChange={(e) => onXAxisLabelChange(e.target.value)}
               placeholder="Enter x-axis label"
-              className="w-full px-3 py-2 rounded-lg border border-[#E5EEF6] focus:outline-none focus:ring-2 focus:ring-[#0F4C81]/20 text-sm"
+              className="w-full px-4 py-2 rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm bg-white/5 text-white placeholder-slate-400"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium text-[#0F4C81] mb-2 block">
+            <label className="text-sm text-slate-300 mb-2 block">
               Y-Axis Label
             </label>
             <input
@@ -317,12 +310,12 @@ const ChartCustomization: React.FC<ChartCustomizationProps> = ({
               value={yAxisLabel}
               onChange={(e) => onYAxisLabelChange(e.target.value)}
               placeholder="Enter y-axis label"
-              className="w-full px-3 py-2 rounded-lg border border-[#E5EEF6] focus:outline-none focus:ring-2 focus:ring-[#0F4C81]/20 text-sm"
+              className="w-full px-4 py-2 rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm bg-white/5 text-white placeholder-slate-400"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium text-[#0F4C81] mb-2 block">
+            <label className="text-sm text-slate-300 mb-2 block">
               Title Font Size: {titleFontSize}px
             </label>
             <input
@@ -331,12 +324,12 @@ const ChartCustomization: React.FC<ChartCustomizationProps> = ({
               max="48"
               value={titleFontSize}
               onChange={(e) => onTitleFontSizeChange(Number(e.target.value))}
-              className="w-full accent-[#0F4C81]"
+              className="w-full accent-blue-500"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium text-[#0F4C81] mb-2 block">
+            <label className="text-sm text-slate-300 mb-2 block">
               Axis Font Size: {axisFontSize}px
             </label>
             <input
@@ -345,7 +338,7 @@ const ChartCustomization: React.FC<ChartCustomizationProps> = ({
               max="24"
               value={axisFontSize}
               onChange={(e) => onAxisFontSizeChange(Number(e.target.value))}
-              className="w-full accent-[#0F4C81]"
+              className="w-full accent-blue-500"
             />
           </div>
         </div>

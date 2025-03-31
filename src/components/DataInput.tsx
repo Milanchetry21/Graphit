@@ -7,16 +7,17 @@ interface DataInputProps {
 }
 
 const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
-  const [datasets, setDatasets] = useState<Array<{ label: string; values: Array<[string, number]> }>>([
+  const [labels, setLabels] = useState<string[]>(['A', 'B', 'C', 'D', 'E']);
+  const [datasets, setDatasets] = useState<Array<{ label: string; values: { [key: string]: number } }>>([
     {
       label: 'Dataset 1',
-      values: [
-        ['A', 0],
-        ['B', 0],
-        ['C', 0],
-        ['D', 0],
-        ['E', 0],
-      ],
+      values: {
+        'A': 1,
+        'B': 2,
+        'C': 3,
+        'D': 4,
+        'E': 5,
+      },
     },
   ]);
   const [csvData, setCsvData] = useState<string>('');
@@ -36,42 +37,61 @@ const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
       onSubmit(newDatasets, xAxisLabels);
     } else {
       // Handle table data
-      const xAxisLabels = Array.from(new Set(datasets.flatMap(ds => ds.values.map(v => v[0]))));
       const processedDatasets = datasets.map(ds => ({
         label: ds.label,
-        data: xAxisLabels.map(label => {
-          const matchingValue = ds.values.find(v => v[0] === label);
-          return matchingValue ? matchingValue[1] : 0;
-        }),
+        data: labels.map(label => ds.values[label] || 0),
       }));
 
-      onSubmit(processedDatasets, xAxisLabels);
+      onSubmit(processedDatasets, labels);
     }
   };
 
   const handleClear = () => {
+    setLabels(['A', 'B', 'C', 'D', 'E']);
     setDatasets([{
       label: 'Dataset 1',
-      values: [
-        ['A', 0],
-        ['B', 0],
-        ['C', 0],
-        ['D', 0],
-        ['E', 0],
-      ],
+      values: {
+        'A': 0,
+        'B': 0,
+        'C': 0,
+        'D': 0,
+        'E': 0,
+      },
     }]);
     setCsvData('');
     onSubmit([], []);
   };
 
-  const handleTableChange = (datasetIndex: number, valueIndex: number, field: 'label' | 'value', newValue: string) => {
-    const newDatasets = [...datasets];
+  const handleTableChange = (datasetIndex: number, label: string, field: 'label' | 'value', newValue: string) => {
     if (field === 'label') {
-      newDatasets[datasetIndex].values[valueIndex][0] = newValue;
+      // Update the label across all datasets
+      const oldLabel = label;
+      const newLabels = labels.map(l => l === oldLabel ? newValue : l);
+      setLabels(newLabels);
+      
+      // Update all datasets with the new label
+      const newDatasets = datasets.map(ds => ({
+        ...ds,
+        values: Object.fromEntries(
+          Object.entries(ds.values).map(([key, value]) => [
+            key === oldLabel ? newValue : key,
+            value
+          ])
+        )
+      }));
+      setDatasets(newDatasets);
     } else {
-      newDatasets[datasetIndex].values[valueIndex][1] = isNaN(parseFloat(newValue)) ? 0 : parseFloat(newValue);
+      // Update value for specific dataset
+      const newDatasets = [...datasets];
+      newDatasets[datasetIndex] = {
+        ...newDatasets[datasetIndex],
+        values: {
+          ...newDatasets[datasetIndex].values,
+          [label]: isNaN(parseFloat(newValue)) ? 0 : parseFloat(newValue)
+        }
+      };
+      setDatasets(newDatasets);
     }
-    setDatasets(newDatasets);
   };
 
   const handleDatasetLabelChange = (datasetIndex: number, newLabel: string) => {
@@ -80,16 +100,33 @@ const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
     setDatasets(newDatasets);
   };
 
-  const addRow = (datasetIndex: number) => {
-    const newDatasets = [...datasets];
-    newDatasets[datasetIndex].values.push(['', 0]);
+  const addRow = () => {
+    const newLabel = String.fromCharCode(65 + labels.length); // Generate next letter
+    setLabels([...labels, newLabel]);
+    
+    // Add the new label with value 0 to all datasets
+    const newDatasets = datasets.map(ds => ({
+      ...ds,
+      values: {
+        ...ds.values,
+        [newLabel]: 0
+      }
+    }));
     setDatasets(newDatasets);
   };
 
-  const removeRow = (datasetIndex: number, valueIndex: number) => {
-    const newDatasets = [...datasets];
-    if (newDatasets[datasetIndex].values.length > 1) {
-      newDatasets[datasetIndex].values = newDatasets[datasetIndex].values.filter((_, i) => i !== valueIndex);
+  const removeRow = (label: string) => {
+    if (labels.length > 1) {
+      const newLabels = labels.filter(l => l !== label);
+      setLabels(newLabels);
+      
+      // Remove the label from all datasets
+      const newDatasets = datasets.map(ds => ({
+        ...ds,
+        values: Object.fromEntries(
+          Object.entries(ds.values).filter(([key]) => key !== label)
+        )
+      }));
       setDatasets(newDatasets);
     }
   };
@@ -97,13 +134,7 @@ const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
   const addDataset = () => {
     setDatasets([...datasets, {
       label: `Dataset ${datasets.length + 1}`,
-      values: [
-        ['A', 0],
-        ['B', 0],
-        ['C', 0],
-        ['D', 0],
-        ['E', 0],
-      ],
+      values: Object.fromEntries(labels.map(label => [label, 0])),
     }]);
   };
 
@@ -115,80 +146,53 @@ const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
 
   return (
     <div className="space-y-6">
-      {/* Multiple Dataset Tables */}
-      <div className="space-y-6">
+      {/* Dataset Inputs */}
+      <div className="space-y-4">
         {datasets.map((dataset, datasetIndex) => (
-          <div key={datasetIndex} className="bg-white rounded-lg border border-[#E5EEF6] p-4">
-            <div className="flex items-center justify-between mb-4">
+          <div key={datasetIndex} className="space-y-4">
+            <div className="flex items-center gap-4">
               <input
                 type="text"
                 value={dataset.label}
                 onChange={(e) => handleDatasetLabelChange(datasetIndex, e.target.value)}
-                className="px-3 py-1 text-sm border border-[#E5EEF6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F4C81]/20"
-                placeholder="Dataset name"
+                placeholder={`Dataset ${datasetIndex + 1} Label`}
+                className="flex-1 px-4 py-2 text-sm bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               />
-              {datasets.length > 1 && (
-                <button
-                  onClick={() => removeDataset(datasetIndex)}
-                  className="text-red-500 hover:text-red-700 text-sm px-2 py-1 rounded"
-                >
-                  Remove Dataset
-                </button>
-              )}
+              <button
+                onClick={() => removeDataset(datasetIndex)}
+                className="p-2 text-slate-300 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
-            
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="bg-[#F5F9FD]">
-                    <th className="border border-[#E5EEF6] px-4 py-2 text-sm font-medium text-[#0F4C81] text-left w-12">#</th>
-                    <th className="border border-[#E5EEF6] px-4 py-2 text-sm font-medium text-[#0F4C81] text-left">Label</th>
-                    <th className="border border-[#E5EEF6] px-4 py-2 text-sm font-medium text-[#0F4C81] text-left">Value</th>
-                    <th className="border border-[#E5EEF6] px-4 py-2 text-sm font-medium text-[#0F4C81] w-20"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {dataset.values.map((row, valueIndex) => (
-                    <tr key={valueIndex} className="hover:bg-[#F5F9FD]/50">
-                      <td className="border border-[#E5EEF6] px-4 py-2 text-sm text-gray-600">{valueIndex + 1}</td>
-                      <td className="border border-[#E5EEF6] px-4 py-2">
-                        <input
-                          type="text"
-                          value={row[0]}
-                          onChange={(e) => handleTableChange(datasetIndex, valueIndex, 'label', e.target.value)}
-                          className="w-full px-2 py-1 text-sm border-none focus:outline-none bg-transparent"
-                          placeholder="Enter label"
-                        />
-                      </td>
-                      <td className="border border-[#E5EEF6] px-4 py-2">
-                        <input
-                          type="number"
-                          value={row[1]}
-                          onChange={(e) => handleTableChange(datasetIndex, valueIndex, 'value', e.target.value)}
-                          className="w-full px-2 py-1 text-sm border-none focus:outline-none bg-transparent"
-                          placeholder="Enter value"
-                        />
-                      </td>
-                      <td className="border border-[#E5EEF6] px-4 py-2">
-                        <button
-                          onClick={() => removeRow(datasetIndex, valueIndex)}
-                          className="text-red-500 hover:text-red-700 text-sm px-2 py-1 rounded"
-                        >
-                          Remove
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {labels.map((label, labelIndex) => (
+                <div key={labelIndex} className="flex items-center gap-3 bg-white/5 p-4 rounded-xl border border-white/10">
+                  <div className="flex-1 grid grid-cols-[80px,1fr] items-center gap-3">
+                    <input
+                      type="text"
+                      value={label}
+                      onChange={(e) => handleTableChange(datasetIndex, label, 'label', e.target.value)}
+                      placeholder={`Label ${labelIndex + 1}`}
+                      className="w-full px-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                    <input
+                      type="number"
+                      value={dataset.values[label]}
+                      onChange={(e) => handleTableChange(datasetIndex, label, 'value', e.target.value)}
+                      placeholder="Value"
+                      className="w-full px-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+                  <button
+                    onClick={() => removeRow(label)}
+                    className="shrink-0 p-2 text-slate-300 hover:text-white transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
             </div>
-
-            <button
-              onClick={() => addRow(datasetIndex)}
-              className="mt-4 px-4 py-2 text-sm font-medium text-[#0F4C81] bg-[#F5F9FD] hover:bg-[#E5EEF6] rounded-lg transition-colors"
-            >
-              Add Row
-            </button>
           </div>
         ))}
       </div>
@@ -196,20 +200,28 @@ const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
       <div className="flex items-center gap-4">
         <button
           onClick={addDataset}
-          className="px-4 py-2 text-sm font-medium text-[#0F4C81] bg-[#F5F9FD] hover:bg-[#E5EEF6] rounded-lg transition-colors"
+          className="px-4 py-2 text-sm font-medium text-slate-300 bg-white/5 hover:bg-white/10 rounded-xl transition-colors flex items-center gap-2"
         >
+          <Plus className="w-4 h-4" />
           Add Dataset
+        </button>
+        <button
+          onClick={addRow}
+          className="px-4 py-2 text-sm font-medium text-slate-300 bg-white/5 hover:bg-white/10 rounded-xl transition-colors flex items-center gap-2"
+        >
+          <Plus className="w-4 h-4" />
+          Add Row
         </button>
         <div className="flex-1" />
         <button
           onClick={handleClear}
-          className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+          className="px-4 py-2 text-sm font-medium text-slate-300 bg-white/5 hover:bg-white/10 rounded-xl transition-colors"
         >
           Clear
         </button>
         <button
           onClick={handleGenerateChart}
-          className="px-4 py-2 text-sm font-medium text-white bg-[#0F4C81] hover:bg-[#0F4C81]/90 rounded-lg transition-colors"
+          className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl transition-colors hover:shadow-lg hover:shadow-blue-500/20"
         >
           Generate Chart
         </button>
@@ -217,14 +229,14 @@ const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
 
       {/* CSV Import */}
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-[#0F4C81]">
+        <label className="block text-sm font-medium text-white">
           Import CSV Data (First row should be headers, first column should be labels)
         </label>
         <textarea
           value={csvData}
           onChange={(e) => setCsvData(e.target.value)}
           placeholder="Year,Dataset 1,Dataset 2&#10;1990,458,89&#10;1991,721,92&#10;1992,189,95&#10;1993,933,98"
-          className="w-full h-32 px-3 py-2 text-sm border border-[#E5EEF6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F4C81]/20 font-mono"
+          className="w-full h-32 px-4 py-3 text-sm bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-mono"
         />
       </div>
     </div>
