@@ -45,7 +45,7 @@ const LandingPage: React.FC = () => {
       <Navbar />
       
       <div className="container mx-auto px-6 h-[calc(100vh-4rem)] flex flex-col justify-between py-4 relative z-10">
-        <div className="text-center mt-24">
+        <div className="text-center mt-16">
           <motion.h1 
             className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent"
             initial={{ opacity: 0, y: 20 }}
@@ -90,7 +90,7 @@ const LandingPage: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="mt-24 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {features.map((feature, index) => (
             <motion.div
               key={index}
@@ -109,7 +109,7 @@ const LandingPage: React.FC = () => {
         </div>
 
         <motion.div
-          className="text-center text-slate-400 mb-4"
+          className="text-center text-slate-400 mb-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 1 }}
